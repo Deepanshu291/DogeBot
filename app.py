@@ -5,6 +5,7 @@ from discord import member,guild
 from discord.ext import commands
 import wikipedia
 import random
+from prsaw2 import Client as ct
 
 # configration
 
@@ -18,7 +19,7 @@ rules = f.readlines()
 
 api_key = "RAy26xdL9jdL"
 # rs = RandomStuff(api_key=api_key)
-# rs = ct(key=os.environ['RSA_KEY'])
+rs = ct(key=api_key)
 
 banned_words=['fuck',"Fuck","FUCK",'dick',"SEX","Sex","se.x",'bitch',"mc","bc","lodu","madarchod","behanchod","sex"]
 
@@ -53,10 +54,10 @@ async def on_message(msg):
     if client.user == msg.author:
         return 
     if msg.channel.id == chatbot or str(msg.channel)=="chat_with_bot":
-        # response =  rs.get_ai_response(msg.content)
-        # await msg.reply(response)
-        # print(response)
-        await msg.reply("This Feature is in under Maintainece :(")
+        response =  rs.get_ai_response(msg.content)
+        await msg.reply(response)
+        print(response)
+        # await msg.reply("This Feature is in under Maintainece :(")
     elif msg.channel.id == 847431857489575937 or str(msg.channel)=="search_with_bot":
         response =  wikipedia.summary(msg.content, sentences = 3)
         print("yes its working")
