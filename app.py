@@ -1,9 +1,7 @@
+import os
 import asyncio
-from asyncio.windows_events import NULL
 import discord
 from discord import member,guild
-from discord import player
-from prsaw  import RandomStuff
 from discord.ext import commands
 import wikipedia
 import random
@@ -19,8 +17,8 @@ f = open("rules.txt", "r")
 rules = f.readlines()
 
 api_key = "RAy26xdL9jdL"
-api_key2= "syxvajmYp0Ka"
-rs = RandomStuff(api_key=api_key)
+# rs = RandomStuff(api_key=api_key)
+# rs = ct(key=os.environ['RSA_KEY'])
 
 banned_words=['fuck',"Fuck","FUCK",'dick',"SEX","Sex","se.x",'bitch',"mc","bc","lodu","madarchod","behanchod","sex"]
 
@@ -55,9 +53,10 @@ async def on_message(msg):
     if client.user == msg.author:
         return 
     if msg.channel.id == chatbot or str(msg.channel)=="chat_with_bot":
-        response =  rs.get_ai_response(msg.content)
-        await msg.reply(response)
-        print(response)
+        # response =  rs.get_ai_response(msg.content)
+        # await msg.reply(response)
+        # print(response)
+        await msg.reply("This Feature is in under Maintainece :(")
     elif msg.channel.id == 847431857489575937 or str(msg.channel)=="search_with_bot":
         response =  wikipedia.summary(msg.content, sentences = 3)
         print("yes its working")
@@ -229,4 +228,4 @@ async def on_disconnect():
     await bot.send('Goodbye :(') 
     
     
-client.run("ODQ3MTQyMjE5MTMwNjAxNTYz.YK5wrA.OWhIVzGQkwZouJ5Tnetrw-4KS_8")    
+client.run(os.environ['TOKEN'])  
