@@ -222,10 +222,10 @@ async def unban(ctx, *, member):
 
     
 
-@client.event
-async def on_disconnect():
-    bot = client.get_channel(id)
-    await bot.send('Goodbye :(') 
+# @client.event
+# async def on_disconnect():
+#     bot = client.get_channel(id)
+#     await bot.send('Goodbye :(') 
     
     
 client.run(os.environ['TOKEN'])  
