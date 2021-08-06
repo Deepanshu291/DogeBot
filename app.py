@@ -35,7 +35,7 @@ async def on_ready():
 
 async def ch_pr():
     await client.wait_until_ready()
-    statuses = ["for #helps, #h","A song","Over the mods","Gaali Ban hai:)","Hi, I am DogeBot"]
+    statuses = ["for #helps, #h","A song","Over the mods","Gaali Ban hai:)","Hi, I am DogeBot","#chatwithbot"]
 
     while not client.is_closed():
         status = random.choice(statuses)
@@ -226,6 +226,7 @@ async def unban(ctx, *, member):
 # async def on_disconnect():
 #     bot = client.get_channel(id)
 #     await bot.send('Goodbye :(') 
-    
-    
+
+
+# client.run(bot)    
 client.run(os.environ['TOKEN'])  
