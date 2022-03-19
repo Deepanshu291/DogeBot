@@ -5,6 +5,7 @@ from discord import member,guild
 from discord.ext import commands
 import wikipedia
 import random
+import requests
 
 BOT_KEY = os.environ['RSAKEY']
 
@@ -42,8 +43,6 @@ id=  710871109947490369
 f = open("rules.txt", "r")
 rules = f.readlines()
 
-# rs = ct(key=api_key)
-rs = ct(key=os.environ['RSAKEY'])
 
 banned_words=['fuck',"Fuck","FUCK",'dick',"SEX","Sex","se.x",'bitch',"mc","bc","lodu","madarchod","behanchod","sex"]
 
