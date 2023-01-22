@@ -293,10 +293,6 @@ async def unban(ctx, *, member):
     # await member.send("You are Unbanned you can join") 
 
 
-# @client.event
-# async def on_disconnect():
-#     bot = client.get_channel(id)
-#     await bot.send('Goodbye :(') 
 
 
 client.run(os.getenv("DISCORD_TOKEN"))    
