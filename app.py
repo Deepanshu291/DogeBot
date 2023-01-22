@@ -295,4 +295,5 @@ async def unban(ctx, *, member):
 
 
 
-client.run(os.getenv("DISCORD_TOKEN"))   
+client.run(os.getenv("DISCORD_TOKEN"))    
+# client.run(os.environ['TOKEN'])  
