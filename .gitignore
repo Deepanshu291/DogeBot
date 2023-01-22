@@ -1,4 +1,7 @@
 .env
 AI/
+env/
+Pipfile
+Pipfile.lock
 
 .gitingnore

@@ -1,42 +1,64 @@
 import os
 import asyncio
+import pytube as pt
 import discord
 from discord import member,guild
 from discord.ext import commands
 import wikipedia
 import random
 import requests
+import shutil
 
-BOT_KEY = os.environ['RSAKEY']
-
-url = "https://random-stuff-api.p.rapidapi.com/ai"
-
+# BOT_KEY = os.environ['RSAKEY']
 
 
-def Bot(msg):
-    querystring = {"msg": msg, "bot_name": "DogeBot", "bot_gender": "male (OPTIONAL)", "bot_master": "DevDt",
-               "bot_age": "BAAP Bara bar", "bot_location": "India (OPTIONAL)"}
+class AIBOT:
+    aibot = False
+    ch_id = 0
+    yturl = ''
+    def Bot(self, msg):
+        url = f"https://v6.rsa-api.xyz/ai/response?user_id=420&message={msg}"
+        headers = {
+             'Authorization': 'Qgy5DMPfjnYX'
+           }
+        response = requests.request("GET", url, headers=headers)
+        r = response.text
+        r = r.split('"message":"')
+        r = r[1]
+        r = r.split('","warning')
+        r = r[0]
+        r = r.replace('"}', '')
+        return r
+    def Downloder(self):
+        ytube = pt.YouTube(url=self.yturl) 
+        # vid = ytube.streams.get_highest_resolution().download(output_path="./data", filename="video.mp4")
+        aud = ytube.streams.get_audio_only().download(output_path="./data", filename="song.mp4")
+    # def audDown(self):
+    #     ytube = pt.YouTube(url=self.url)
+    #     aud = ytube.streams.get_audio_only().download(output_path="./data", filename="song.mp4")
+    def title(self):
+        ytube = pt.YouTube(url=self.yturl) 
+        return ytube.title
+    def desc(self):
+        ytube = pt.YouTube(url=self.yturl) 
+        return ytube.description
+    def thumnail(self):
+        ytube = pt.YouTube(url=self.yturl)
+        return ytube.thumbnail_url
+    def fileh(self):
+        if os.path.exists("data"):
+            shutil.rmtree("data")
+        else:    
+            os.makedirs(name="data")
 
-    headers = {
-    'authorization': BOT_KEY,
-    'x-rapidapi-host': "random-stuff-api.p.rapidapi.com",
-    'x-rapidapi-key': "bb5d2d508fmsh2df345d6ad087c9p1612bfjsn88a03730773d"
-        }
 
-    response = requests.request("GET", url, headers=headers, params=querystring)
-
-    r = response.text
-    r = r.split('"AIResponse":"')
-    r = r[1]
-    r = r.replace('"}','')
-    return r
-    print(r)
-
+    # print(r)
+B = AIBOT()
 
 # configration
-
-client = commands.Bot(command_prefix="#")
-Bot = discord.Client()
+intents = discord.Intents.default()
+intents.message_content = True
+client = commands.Bot(command_prefix="#",intents=intents)
 
 id=  710871109947490369
 
@@ -50,24 +72,23 @@ banned_words=['fuck',"Fuck","FUCK",'dick',"SEX","Sex","se.x",'bitch',"mc","bc","
 
 @client.event
 async def on_ready():
-    # await client.change_presence(activity=discord.Game(name=" #helps, #h"))
-    # await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="A song"))
-    # await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="Over the mods"))
+    await client.change_presence(activity=discord.Game(name=" #helps, #h"))
+    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="A song"))
+    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="Over the mods"))
     print("Hi, I am DogeBot")
     bot = client.get_channel(id)
     await bot.send('DogeBot is Live :)') 
 
-async def ch_pr():
-    await client.wait_until_ready()
-    statuses = ["for #helps, #h","A song","Over the mods","Gaali Ban hai:)","Hi, I am DogeBot","#chatwithbot"]
+# async def ch_pr():
+#     await client.wait_until_ready()
+#     statuses = ["for #helps, #h","A song","Over the mods","Gaali Ban hai:)","Hi, I am DogeBot","#chatwithbot"]
 
-    while not client.is_closed():
-        status = random.choice(statuses)
-        await client.change_presence(activity=discord.Activity(name=status, type=discord.ActivityType.playing))
-        await asyncio.sleep(5)
-client.loop.create_task(ch_pr())
-
-chatbot = 847424874271342603    
+#     while not client.is_closed():
+#         status = random.choice(statuses)
+#         await client.change_presence(activity=discord.Activity(name=status, type=discord.ActivityType.playing))
+#         await asyncio.sleep(5)
+# client.loop.create_task(ch_pr())
+  
 
 @client.event
 async def on_message(msg):
@@ -76,23 +97,27 @@ async def on_message(msg):
                 await msg.delete() 
     if client.user == msg.author:
         return 
-    if msg.channel.id == chatbot or str(msg.channel)=="chat_with_bot":
-        response =  Bot(msg.content)
-        await msg.reply(response)
-        print(response)
-        # await msg.reply("This Feature is in under Maintainece :(")
+    if B.aibot == True and msg.channel.id == B.ch_id:
+        print(msg.content)
+        response =  B.Bot(str(msg.content))
+        await msg.reply(str(response))
+    # elif str(msg.channel)  == "chat_with_bot":
+    #     if "https" in str(msg.content):
+    #         B.yturl = str(msg.content)
+    #         B.Downloder()
+    #         em = discord.Embed(title = B.title(), description = B.desc() , color = discord.Colour.dark_gold())
+    #         em.set_thumbnail(url=B.thumnail())
+    #         await msg.reply("Your file is now ready", embed=em)
     elif msg.channel.id == 847431857489575937 or str(msg.channel)=="search_with_bot":
-        response =  wikipedia.summary(msg.content, sentences = 3)
-        print("yes its working")
+        print(str(msg.content))
+        response =  wikipedia.summary(str(msg.content), sentences = 3)
+        print("yes its working",response)
         await msg.reply(response)    
     else:
         pass
+    # print(msg.content)
     await client.process_commands(msg)
          
-
-   
-doge_bot=847142219130601563
-
 
 
 @client.command(name="version")
@@ -105,6 +130,30 @@ async def version(ctx):
 async def rule(ctx,*,number):
     await ctx.send(rules[int(number)-1]) 
 
+@client.command(name="ytsong")
+async def videoD(ctx, url:str):
+    B.fileh()
+    B.yturl = url
+    await ctx.message.channel.send("Loading....")
+    B.Downloder()
+    f = discord.File(r'E:\Development\Python\New folder\DogeBot\data\song.mp4')
+    em = discord.Embed(title = B.title(), color = discord.Colour.blue())
+    em.set_thumbnail(url=B.thumnail())
+    em.set_image(url=B.thumnail())
+    # await msg.reply("Your file is now ready", embed=em)
+    await ctx.send("Your file is here ",file=f, embed=em)
+
+@client.command(name="aichat")
+async def AIchat(ctx):
+    print(ctx.channel.id)
+    if B.aibot == True:
+        B.aibot=False
+        await ctx.message.channel.send("Ai Bot is Now OFFLINE")
+    else:
+        B.aibot = True
+        B.ch_id = ctx.channel.id
+        await ctx.message.channel.send("Ai Bot start Now")
+        
 
 
 # Help
@@ -120,7 +169,7 @@ async def helps(ctx):
     em.add_field(name="Clean ",value=" #clean 5 0r #c 5 or use  cleanx,cx also", inline=False)
     em.add_field(name="Whois ",value="Know your server member (#whois @member)", inline=True)
     em.add_field(name="Mute UnMute ",value=" #Mute @member 0r #m And  #unmute @member ", inline=True)
-    em.add_field(name="Aichat ",value="want to chat with Bot go #chat_with_bot (Or ha gaali or PornStar search ka Naam  bhi mat lena :)", inline=False)
+    em.add_field(name="Aichat",value="want to chat with Bot type #aichat for start and Stop AI chat (Or ha gaali or PornStar search ka Naam  bhi mat lena :)", inline=False)
     em.add_field(name="No abusing Word ",value="no one use Abusing word in this server because (Jab saala ham nhi dete toh tum kese de sakte ho :)", inline=False)
 
     await ctx.send(embed=em) 
@@ -233,24 +282,22 @@ async def ban(ctx, member : discord.Member,*,reason="You Dont Follow Server Rule
 async def unban(ctx, *, member):
 	banned_users = await ctx.guild.bans()
 	member_name, member_discriminator = member.split('#')
-    
 	for ban_entry in banned_users:
 		user = ban_entry.user
 		
 		if (user.name, user.discriminator) == (member_name, member_discriminator):
             
- 			await ctx.guild.unban(user)
- 			await ctx.channel.send(f"Unbanned: {user.mention}") 
-            # await member.send("You are Unbanned you can join") 
+ 			await ctx.guild.unban(user) 
+    # await ctx.channel.send(f"Unbanned: {user.mention}") 
+    # await member.send("You are Unbanned you can join") 
 
-
-    
 
 # @client.event
 # async def on_disconnect():
 #     bot = client.get_channel(id)
 #     await bot.send('Goodbye :(') 
 
-
-# client.run(bot)    
-client.run(os.environ['TOKEN'])  
+bot = "ODQ3MTQyMjE5MTMwNjAxNTYz.GDJ9Qz.rgg-8LukPepMHmhpm5wwwiOmLbsz09XtvNwBaU"
+DISCORD_TOKEN="ODQ3MTQyMjE5MTMwNjAxNTYz.GVO63h.kR3lEsGfcChUB-okaqqqgNkvi0bSSdIVucgJ44"
+client.run(DISCORD_TOKEN)    
+# client.run(os.environ['TOKEN'])  
