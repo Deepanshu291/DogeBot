@@ -3,5 +3,7 @@ AI/
 env/
 Pipfile
 Pipfile.lock
-
+data
 .gitingnore
+Procfile
+runtime.txt

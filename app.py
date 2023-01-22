@@ -8,6 +8,7 @@ import wikipedia
 import random
 import requests
 import shutil
+from dotenv import load_dotenv
 
 # BOT_KEY = os.environ['RSAKEY']
 
@@ -54,7 +55,7 @@ class AIBOT:
 
     # print(r)
 B = AIBOT()
-
+load_dotenv()
 # configration
 intents = discord.Intents.default()
 intents.message_content = True
@@ -297,7 +298,6 @@ async def unban(ctx, *, member):
 #     bot = client.get_channel(id)
 #     await bot.send('Goodbye :(') 
 
-bot = "ODQ3MTQyMjE5MTMwNjAxNTYz.GDJ9Qz.rgg-8LukPepMHmhpm5wwwiOmLbsz09XtvNwBaU"
-DISCORD_TOKEN="ODQ3MTQyMjE5MTMwNjAxNTYz.GVO63h.kR3lEsGfcChUB-okaqqqgNkvi0bSSdIVucgJ44"
-client.run(DISCORD_TOKEN)    
+
+client.run(os.getenv("DISCORD_TOKEN"))    
 # client.run(os.environ['TOKEN'])  
