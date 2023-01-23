@@ -15,6 +15,7 @@ from dotenv import load_dotenv
 
 class AIBOT:
     aibot = False
+    gamebot = False
     ch_id = 0
     yturl = ''
     def Bot(self, msg):
@@ -144,6 +145,17 @@ async def videoD(ctx, url:str):
     # await msg.reply("Your file is now ready", embed=em)
     await ctx.send("Your file is here ",file=f, embed=em)
 
+@client.command(name="sr")
+async def search(ctx, title:str):
+    print(title)
+    await ctx.message.channel.send("Searching....")
+    try:
+        response =  wikipedia.summary(title, sentences = 3)
+        print("yes its working",response)
+        await ctx.reply(f"{title} \n{response}")    
+    except:
+        await ctx.reply(f"{title} are not Found")
+
 @client.command(name="aichat")
 async def AIchat(ctx):
     print(ctx.channel.id)
@@ -229,7 +241,6 @@ async def clean(ctx,amount:int):
 async def cleanx(ctx,amount:int):
     await ctx.channel.purge(limit = amount+1)
     
-    # await ctx.send('Cleared by {}'.format(ctx.author.mention))
     
 # Mute Member
 @client.command(aliases=['m'])
@@ -292,7 +303,171 @@ async def unban(ctx, *, member):
     # await ctx.channel.send(f"Unbanned: {user.mention}") 
     # await member.send("You are Unbanned you can join") 
 
+player1 = ""
+player2 = ""
+turn = ""
+gameOver = True
 
+board = []
+
+winningConditions = [
+    [0,1,2],
+    [3,4,5],
+    [6,7,8],
+    [0,3,6],
+    [1,4,7],
+    [2,5,8],
+    [0,4,8],
+    [2,4,6]
+]
+
+@client.command(name="gb")
+async def GameBot(ctx, p1: discord.Member, p2: discord.Member):
+   print(ctx.channel.id)
+   if B.gamebot == True:
+        B.gamebot=False
+        await ctx.message.channel.send("GameBot is Now OFFLINE")
+   else:
+        B.gamebot = True
+        B.ch_id = ctx.channel.id
+        await ctx.message.channel.send("GameBot start Now")
+
+   if B.gamebot == False :
+      await ctx.send("Type #gamebot or #gb to start playing game...")
+
+   if B.gamebot == True:
+        
+    global player1
+    global player2
+    global turn
+    global gameOver
+    global count
+    
+    if p1 == p2:
+       await ctx.send("Pls Add Other Player2 :(")
+       gameOver=True
+       await ctx.send("Thankyou for Playing :)")
+  
+    elif gameOver:
+          global board
+          board = [":white_large_square:", ":white_large_square:",":white_large_square:",
+                    ":white_large_square:", ":white_large_square:",":white_large_square:",
+                    ":white_large_square:", ":white_large_square:",":white_large_square:"]
+          board2 = [":one:", ":two:",":three:",
+                    ":four:", ":five:",":six:",
+                    ":seven:", ":eight:",":nine:"]          
+          turn = ""
+          gameOver = False
+          count= 0
+
+          player1= p1
+          player2 = p2
+
+        #   Print board
+          line =""
+          for x in range(len(board2)):
+               if x == 2 or x==5 or x==8:
+                   line += " " + board2[x]
+                   await ctx.send(line)
+                   line=""
+               else:
+                   line += " " + board2[x]
+
+        #   check whos turn 
+          num = random.randint(1,2)
+          await ctx.send("!p (1-9) for Place your Move")
+          await ctx.send("!q for Quit the Game :(")
+          if num == 1:
+              turn = player1
+              await ctx.send("It is <@"+ str(player1.id)+">'s turn")
+          elif num==2:
+              turn =player2
+              await ctx.send("It is <@"+ str(player2.id)+">'s turn")  
+    else:   
+          await ctx.send("A game is already in progress! Finish it before starting a new one.")                 
+
+
+@client.command()
+async def p(ctx, pos: int):
+#    if ctx.channel.id==game_id:
+        
+    global turn
+    global player1
+    global player2
+    global board
+    global count
+    global gameOver
+
+    if not gameOver:
+        mark = ""
+        if turn == ctx.author:
+            if turn == player1:
+                mark = ":regional_indicator_x:"
+            elif turn == player2:
+                mark = ":o2:"
+            if 0 < pos < 10 and board[pos - 1] == ":white_large_square:" :
+                board[pos - 1] = mark
+                count += 1
+
+                # print the board
+                line = ""
+                for x in range(len(board)):
+                    if x == 2 or x == 5 or x == 8:
+                        line += " " + board[x]
+                        await ctx.send(line)
+                        line = ""
+                    else:
+                        line += " " + board[x]
+
+                checkWinner(winningConditions, mark)
+                print(count)
+                if gameOver == True:
+                    await ctx.send(mark + " wins!")
+                elif count >= 9:
+                    gameOver = True
+                    await ctx.send("It's a tie!")
+
+                # switch turns
+                if turn == player1:
+                    turn = player2
+                elif turn == player2:
+                    turn = player1
+            else:
+                await ctx.send("Be sure to choose an integer between 1 and 9 (inclusive) and an unmarked tile.")
+        else:
+            await ctx.send("It is not your turn.")
+    else:
+        await ctx.send("Please start a new game using the !game command.")
+
+def checkWinner(winningConditions, mark):
+    global gameOver
+    for condition in winningConditions:
+        if board[condition[0]] == mark and board[condition[1]] == mark and board[condition[2]] == mark:
+            gameOver = True
+
+@client.command()
+async def q(ctx):
+#    if ctx.channel.id==game_id:
+    
+    global gameOver
+    if not gameOver:
+        gameOver = True
+        await ctx.send("Thankyou for Playing :)")
+
+# @tictactoe.error
+async def tictactoe_error(ctx, error):
+    print(error)
+    if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send("Please mention 2 players for this command.")
+    elif isinstance(error, commands.BadArgument):
+        await ctx.send("Please make sure to mention/ping players (ie. <@688534433879556134>).")
+
+# @place.error
+async def place_error(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send("Please enter a position you would like to mark.")
+    elif isinstance(error, commands.BadArgument):
+        await ctx.send("Please make sure to enter an integer.") 
 
 
 client.run(os.getenv("DISCORD_TOKEN"))    
