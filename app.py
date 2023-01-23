@@ -122,9 +122,9 @@ async def on_message(msg):
          
 
 
-@client.command(name="version")
+@client.command(name="v")
 async def version(ctx):
-    await ctx.message.channel.send("Version 1.0.1")
+    await ctx.message.channel.send("Version 2.0.1")
 
 # rules
 
@@ -166,8 +166,6 @@ async def AIchat(ctx):
         B.aibot = True
         B.ch_id = ctx.channel.id
         await ctx.message.channel.send("Ai Bot start Now")
-        
-
 
 # Help
 
@@ -175,7 +173,8 @@ async def AIchat(ctx):
 async def helps(ctx):
     em = discord.Embed(title = "DogeBot Command List", description = "We have some really kick-ass " , color = discord.Colour.dark_gold())
     em.set_author(name=ctx.author.name)
-
+    em.set_thumbnail(url=ctx.guild.icon)
+    em.set_image(url=ctx.guild.banner)
     em.add_field(name="#version",value="DogeBot Version", inline=True)
     em.add_field(name="#server",value="Know your Server Information", inline=True)
     em.add_field(name="Admin ",value="#Kick, #Ban, #unban", inline=True)
@@ -183,6 +182,7 @@ async def helps(ctx):
     em.add_field(name="Whois ",value="Know your server member (#whois @member)", inline=True)
     em.add_field(name="Mute UnMute ",value=" #Mute @member 0r #m And  #unmute @member ", inline=True)
     em.add_field(name="Aichat",value="want to chat with Bot type #aichat for start and Stop AI chat (Or ha gaali or PornStar search ka Naam  bhi mat lena :)", inline=False)
+    em.add_field(name="GameBot",value="want to tic toe game with friends Just type #gamebot/ #gb @player1 @player2 ", inline=False)
     em.add_field(name="No abusing Word ",value="no one use Abusing word in this server because (Jab saala ham nhi dete toh tum kese de sakte ho :)", inline=False)
 
     await ctx.send(embed=em) 
@@ -191,26 +191,19 @@ async def helps(ctx):
 
 @client.command()
 async def server(ctx):
-    name = str(ctx.guild.name)
-    desc = str(ctx.guild.description)
-    owner = str(ctx.guild.owner)
-    id = str(ctx.guild.id)
-    region = str(ctx.guild.region)
-    members = str(ctx.guild.member_count)
-    icon = str(ctx.guild.icon_url)
+    embed = discord.Embed(title=f"{ctx.guild.name} Info", description="Information of this Server:- \n", color=discord.Colour.blue())
+    embed.add_field(name='🆔Server ID', value=f"{ctx.guild.id}", inline=True)
+    embed.add_field(name='📆Created On', value=ctx.guild.created_at.strftime("%b %d %Y"), inline=True)
+    embed.add_field(name='👑Owner', value=f"{ctx.guild.owner}", inline=True)
+    embed.add_field(name='👥Members', value=f'{ctx.guild.member_count} Members', inline=True)
+    embed.add_field(name='💬Channels', value=f'{len(ctx.guild.text_channels)} Text | {len(ctx.guild.voice_channels)} Voice', inline=True)
+    embed.add_field(name='🌎Region', value=f'{ctx.guild.region}', inline=True)
+    embed.set_thumbnail(url=ctx.guild.icon) 
+    embed.set_image(url=ctx.guild.banner)
+    embed.set_footer(text="⭐ • Duo")    
+    embed.set_author( name=f"{ctx.author.name}", icon_url=ctx.message.author.avatar)
 
-    em = discord.Embed(
-        title=name + " Server Information",
-        description= desc,
-        color= discord.Colour.blue()
-        )
-    em.set_thumbnail(url=icon)
-    em.add_field(name="Owner", value=owner, inline=True)
-    em.add_field(name="Server ID", value=id, inline=True)
-    em.add_field(name="Region", value=region, inline=False)
-    em.add_field(name="Member Count", value=members, inline=True)
-    
-    await ctx.send(embed=em)
+    await ctx.send(embed=embed)
     
 
 #Search Member 
@@ -220,8 +213,8 @@ async def server(ctx):
 async def whois(ctx, member : discord.Member):
     embed = discord.Embed(title = member.name, description = member.mention, color = discord.Colour.green())
     embed.add_field(name = "ID", value=member.id, inline= True)
-    embed.set_thumbnail(url=member.avatar_url)
-    embed.set_footer(icon_url=ctx.author.avatar_url, text=f"Requested by {ctx.author.name}")
+    embed.set_thumbnail(url=member.avatar)
+    embed.set_footer(icon_url=ctx.author.avatar, text=f"Requested by {ctx.author.name}")
     await ctx.send(embed=embed)
     
        
@@ -375,8 +368,8 @@ async def GameBot(ctx, p1: discord.Member, p2: discord.Member):
 
         #   check whos turn 
           num = random.randint(1,2)
-          await ctx.send("!p (1-9) for Place your Move")
-          await ctx.send("!q for Quit the Game :(")
+          await ctx.send("#p (1-9) for Place your Move")
+          await ctx.send("#q for Quit the Game :(")
           if num == 1:
               turn = player1
               await ctx.send("It is <@"+ str(player1.id)+">'s turn")
@@ -451,6 +444,7 @@ async def q(ctx):
     
     global gameOver
     if not gameOver:
+        B.gamebot = False
         gameOver = True
         await ctx.send("Thankyou for Playing :)")
 
